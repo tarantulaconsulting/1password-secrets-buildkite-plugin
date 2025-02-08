@@ -13,8 +13,23 @@ function expandVariable() {
 # Use op read to get field values https://developer.1password.com/docs/cli/reference/commands/read
 function readField {
 	local opRef=$1
+	local retries=${BUILDKITE_PLUGIN_1PASSWORD_SECRETS_RETRIES:-0}
 
 	result=$($OP_EXE read "${opRef}" --force --no-newline)
+
+	# retry on error if configured
+	attempt=1
+  while [[ $retries -gt 0 && -z $result ]]; do
+    [ -z "$result" ] && {
+      echo "${attempt}/${retries}: Unable to read secret reference \"${opRef}\" from 1Password" 1>&2
+      echo "${attempt}/${retries}: Retrying to read secret reference \"${opRef}\" from 1Password"
+    }
+    sleep 5
+    result=$($OP_EXE read "${opRef}" --force --no-newline)
+    retries=$((retries - 1))
+    attempt=$((attempt + 1))
+  done
+
 	[ -z "$result" ] && {
 		echo "Unable to read secret reference \"${opRef}\" from 1Password" 1>&2
 		exit 1

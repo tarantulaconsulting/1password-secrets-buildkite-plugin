@@ -31,6 +31,11 @@ if [[ "${BUILDKITE_PLUGIN_1PASSWORD_SECRETS_DEBUG:-false}" =~ (true|on|1) ]]; th
 	set -x
 fi
 
+if [[ "${BUILDKITE_PLUGIN_1PASSWORD_SECRETS_RETRIES:-0}" -gt 0 ]]; then
+	echo "~~~ :leftwards_arrow_with_hook: Enabling retries: ${BUILDKITE_PLUGIN_1PASSWORD_SECRETS_RETRIES}"
+	set -x
+fi
+
 connectHost="${BUILDKITE_PLUGIN_1PASSWORD_SECRETS_CONNECT_HOST:-$OP_CONNECT_HOST}"
 
 if [ -z "${connectHost}" ]; then

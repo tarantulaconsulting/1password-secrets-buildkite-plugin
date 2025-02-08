@@ -1,6 +1,6 @@
 name: 1Password
 description: Read secrets from 1Password
-author: https://tapendium.com
+author: http://www.tarantulaconsulting.com
 requirements:
   - op
 configuration:
@@ -20,6 +20,9 @@ configuration:
     clear_token:
       type: boolean
       description: Clear OP_CONNECT_TOKEN environment variable on completion
+    retries:
+      type: integer
+      description: Number of retries to make when fetching secrets
     env:
       type: object
       patternProperties:
